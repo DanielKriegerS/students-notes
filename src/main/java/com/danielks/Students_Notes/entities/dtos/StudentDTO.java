@@ -11,7 +11,7 @@ public record StudentDTO(
         UUID id,
         @NotEmpty(message = "name is blank") String name,
         @NotEmpty(message = "age is blank") int age,
-        @NotNull(message = "course is blank") Course course,
+        @NotNull(message = "course is blank") CourseDTO course,
         List<Double> notes
         ) {
 }
