@@ -9,7 +9,7 @@ public record CourseDTO(
         UUID id,
         @NotEmpty(message = "name is blank") String name,
         int maxStudents,
-        List<StudentDTO> students
+        List<UUID> studentsIds
 
 ) {
 }
