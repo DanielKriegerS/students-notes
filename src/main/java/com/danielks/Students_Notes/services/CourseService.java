@@ -35,4 +35,10 @@ public class CourseService {
                 .map(courseMapper::toDto)
                 .collect(Collectors.toList());
     }
+
+    public CourseDTO createCourse(CourseDTO courseDTO) {
+        Course course = courseMapper.toEntity(courseDTO);
+        course = courseRepository.save(course);
+        return courseMapper.toDto(course);
+    }
 }
