@@ -15,10 +15,9 @@ import java.util.stream.Collectors;
 public class CourseService {
 
     private final CourseRepository courseRepository;
-
     private final CourseMapper courseMapper;
 
-    public CourseService(CourseRepository courseRepository, CourseMapper courseMapper) {
+    public CourseService(CourseRepository courseRepository,  CourseMapper courseMapper) {
         this.courseRepository = courseRepository;
         this.courseMapper = courseMapper;
     }
@@ -38,7 +37,24 @@ public class CourseService {
 
     public CourseDTO createCourse(CourseDTO courseDTO) {
         Course course = courseMapper.toEntity(courseDTO);
+
+        validateCourse(course);
+
         course = courseRepository.save(course);
         return courseMapper.toDto(course);
+    }
+
+    private void validateCourse(Course course) {
+        if (course.getName() == null || course.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("The course has no name!");
+        }
+
+        if (course.getMaxStudents() == 0) {
+            throw new IllegalArgumentException("The course has no maximum of students!");
+        }
+
+        if (course.getMaxStudents() < 0) {
+            throw new IllegalArgumentException("The course has an invalid maximum of students!");
+        }
     }
 }
