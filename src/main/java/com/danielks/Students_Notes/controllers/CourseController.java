@@ -2,11 +2,9 @@ package com.danielks.Students_Notes.controllers;
 
 import com.danielks.Students_Notes.entities.dtos.CourseDTO;
 import com.danielks.Students_Notes.services.CourseService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -31,5 +29,11 @@ public class CourseController {
     public ResponseEntity<List<CourseDTO>> getAllCourses() {
         List<CourseDTO> courses = courseService.getAllCourses();
         return ResponseEntity.ok(courses);
+    }
+
+    @PostMapping
+    public ResponseEntity<CourseDTO> createCourse(@RequestBody CourseDTO courseDTO) {
+        CourseDTO createdCourse = courseService.createCourse(courseDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdCourse);
     }
 }
