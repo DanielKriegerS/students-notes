@@ -61,4 +61,11 @@ public class CourseService {
         Course updatedCourse = courseRepository.save(existingCourse);
         return courseMapper.toDto(updatedCourse);
     }
+
+    public void deleteCourse(UUID id) {
+        if (!courseRepository.existsById(id)) {
+            throw new EntityNotFoundException("Course not found with id: " + id);
+        }
+        courseRepository.deleteById(id);
+    }
 }
