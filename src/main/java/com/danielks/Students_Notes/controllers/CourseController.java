@@ -42,4 +42,10 @@ public class CourseController {
         CourseDTO updatedCourse = courseService.updateCourse(id, courseDTO);
         return ResponseEntity.ok(updatedCourse);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCourse(@PathVariable UUID id) {
+        courseService.deleteCourse(id);
+        return ResponseEntity.noContent().build();
+    }
 }
