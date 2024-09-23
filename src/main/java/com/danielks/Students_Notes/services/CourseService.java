@@ -16,10 +16,12 @@ public class CourseService {
 
     private final CourseRepository courseRepository;
     private final CourseMapper courseMapper;
+    private final ValidationService validator;
 
-    public CourseService(CourseRepository courseRepository,  CourseMapper courseMapper) {
+    public CourseService(CourseRepository courseRepository, CourseMapper courseMapper, ValidationService validator) {
         this.courseRepository = courseRepository;
         this.courseMapper = courseMapper;
+        this.validator = validator;
     }
 
     public CourseDTO getCourseById(UUID id) {
@@ -38,23 +40,25 @@ public class CourseService {
     public CourseDTO createCourse(CourseDTO courseDTO) {
         Course course = courseMapper.toEntity(courseDTO);
 
-        validateCourse(course);
+        validator.validateNewCourse(course);
 
         course = courseRepository.save(course);
         return courseMapper.toDto(course);
     }
 
-    private void validateCourse(Course course) {
-        if (course.getName() == null || course.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("The course has no name!");
+    public CourseDTO updateCourse(UUID id, CourseDTO courseDTO) {
+        Course existingCourse = courseRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + id));
+
+        if(courseDTO.name() != null || !courseDTO.name().trim().isEmpty()){
+            existingCourse.setName(courseDTO.name());
         }
 
-        if (course.getMaxStudents() == 0) {
-            throw new IllegalArgumentException("The course has no maximum of students!");
+        if(courseDTO.maxStudents() > 0) {
+            existingCourse.setMaxStudents(courseDTO.maxStudents());
         }
 
-        if (course.getMaxStudents() < 0) {
-            throw new IllegalArgumentException("The course has an invalid maximum of students!");
-        }
+        Course updatedCourse = courseRepository.save(existingCourse);
+        return courseMapper.toDto(updatedCourse);
     }
 }
