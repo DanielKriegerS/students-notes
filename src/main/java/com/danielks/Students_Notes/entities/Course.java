@@ -15,7 +15,7 @@ public class Course {
     private String name;
     private int maxStudents;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Student> students;
 
     public Course() {
