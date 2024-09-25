@@ -1,12 +1,11 @@
 package com.danielks.Students_Notes.controllers;
 
+import com.danielks.Students_Notes.entities.dtos.CourseDTO;
 import com.danielks.Students_Notes.entities.dtos.StudentDTO;
 import com.danielks.Students_Notes.services.StudentService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,10 +24,15 @@ public class StudentController {
         return service.getAllStudents();
     }
 
-    // Retornar um estudante pelo ID
     @GetMapping("/{id}")
     public ResponseEntity<StudentDTO> getStudentById(@PathVariable UUID id) {
         StudentDTO student = service.getStudentById(id);
         return student != null ? ResponseEntity.ok(student) : ResponseEntity.notFound().build();
+    }
+
+    @PostMapping
+    public ResponseEntity<StudentDTO> createStudent(@RequestBody StudentDTO studentDTO) {
+        StudentDTO createdCourse = service.createStudent(studentDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdCourse);
     }
 }
