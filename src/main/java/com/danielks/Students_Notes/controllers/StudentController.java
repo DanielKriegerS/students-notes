@@ -35,4 +35,10 @@ public class StudentController {
         StudentDTO createdCourse = service.createStudent(studentDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCourse);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<StudentDTO> updateStudent(@PathVariable UUID id, @RequestBody StudentDTO studentDTO) {
+        StudentDTO updatedStudent = service.updateStudent(id, studentDTO);
+        return ResponseEntity.ok(updatedStudent);
+    }
 }
