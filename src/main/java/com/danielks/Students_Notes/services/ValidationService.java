@@ -3,6 +3,7 @@ package com.danielks.Students_Notes.services;
 import com.danielks.Students_Notes.entities.Course;
 import com.danielks.Students_Notes.entities.Student;
 import com.danielks.Students_Notes.exceptions.course_exceptions.InvalidCourseRequestException;
+import com.danielks.Students_Notes.exceptions.student_exceptions.InvalidStudentRequestException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,11 +20,11 @@ public class ValidationService {
 
     public void validateNewStudent(Student student) {
         if (student.getName() == null || student.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("The student has no name!");
+            throw new InvalidStudentRequestException("The student has no name!");
         }
 
         if (student.getAge() < 15) {
-            throw new IllegalArgumentException("The age is not suficient to the courses!");
+            throw new InvalidStudentRequestException("The age is not suficient to the courses!");
         }
     }
 }

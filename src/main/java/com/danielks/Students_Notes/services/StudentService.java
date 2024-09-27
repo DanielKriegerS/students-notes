@@ -3,8 +3,9 @@ package com.danielks.Students_Notes.services;
 import com.danielks.Students_Notes.entities.Student;
 import com.danielks.Students_Notes.entities.dtos.StudentDTO;
 import com.danielks.Students_Notes.entities.mappers.StudentMapper;
+import com.danielks.Students_Notes.exceptions.student_exceptions.InvalidStudentRequestException;
+import com.danielks.Students_Notes.exceptions.student_exceptions.StudentNotFoundException;
 import com.danielks.Students_Notes.repositories.StudentRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,7 +49,7 @@ public class StudentService {
 
     public StudentDTO updateStudent(UUID id, StudentDTO studentDTO) {
         Student existingStudent = studentRepository.findById(id)
-                .orElseThrow(()-> new EntityNotFoundException("Student not found with id " + id));
+                .orElseThrow(()-> new StudentNotFoundException(id));
 
         if (studentDTO.name() != null || studentDTO.name().trim().isEmpty()){
             existingStudent.setName(studentDTO.name());
@@ -59,7 +60,7 @@ public class StudentService {
         }
 
         if (studentDTO.age() > 0 && studentDTO.age() < 15) {
-            throw new IllegalArgumentException("The age is invalid!");
+            throw new InvalidStudentRequestException("The age is invalid!");
         }
 
         Student updateStudent = studentRepository.save(existingStudent);
@@ -68,7 +69,7 @@ public class StudentService {
 
     public void deleteStudent (UUID id) {
         if (!studentRepository.existsById(id)) {
-            throw new EntityNotFoundException("Student not found with id " + id);
+            throw new StudentNotFoundException(id);
         }
         studentRepository.deleteById(id);
     }
