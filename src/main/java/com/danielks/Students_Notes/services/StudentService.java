@@ -58,6 +58,10 @@ public class StudentService {
             existingStudent.setAge(studentDTO.age());
         }
 
+        if (studentDTO.age() > 0 && studentDTO.age() < 15) {
+            throw new IllegalArgumentException("The age is invalid!");
+        }
+
         Student updateStudent = studentRepository.save(existingStudent);
         return studentMapper.toDto(updateStudent);
     }
