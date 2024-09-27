@@ -4,6 +4,7 @@ import com.danielks.Students_Notes.entities.Student;
 import com.danielks.Students_Notes.entities.dtos.StudentDTO;
 import com.danielks.Students_Notes.entities.mappers.StudentMapper;
 import com.danielks.Students_Notes.repositories.StudentRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,5 +44,21 @@ public class StudentService {
 
         student = studentRepository.save(student);
         return studentMapper.toDto(student);
+    }
+
+    public StudentDTO updateStudent(UUID id, StudentDTO studentDTO) {
+        Student existingStudent = studentRepository.findById(id)
+                .orElseThrow(()-> new EntityNotFoundException("Student not found with id " + id));
+
+        if (studentDTO.name() != null || studentDTO.name().trim().isEmpty()){
+            existingStudent.setName(studentDTO.name());
+        }
+
+        if (studentDTO.age() > 15) {
+            existingStudent.setAge(studentDTO.age());
+        }
+
+        Student updateStudent = studentRepository.save(existingStudent);
+        return studentMapper.toDto(updateStudent);
     }
 }
