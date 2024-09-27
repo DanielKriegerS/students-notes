@@ -2,21 +2,18 @@ package com.danielks.Students_Notes.services;
 
 import com.danielks.Students_Notes.entities.Course;
 import com.danielks.Students_Notes.entities.Student;
+import com.danielks.Students_Notes.exceptions.course_exceptions.InvalidCourseRequestException;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ValidationService {
     public void validateNewCourse(Course course) {
         if (course.getName() == null || course.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("The course has no name!");
+            throw new InvalidCourseRequestException("name");
         }
 
-        if (course.getMaxStudents() == 0) {
-            throw new IllegalArgumentException("The course has no maximum of students!");
-        }
-
-        if (course.getMaxStudents() < 0) {
-            throw new IllegalArgumentException("The course has an invalid maximum of students!");
+        if (course.getMaxStudents() == 0 || course.getMaxStudents() <= 0) {
+            throw new InvalidCourseRequestException("max of students");
         }
     }
 

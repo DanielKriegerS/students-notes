@@ -3,8 +3,8 @@ package com.danielks.Students_Notes.services;
 import com.danielks.Students_Notes.entities.Course;
 import com.danielks.Students_Notes.entities.dtos.CourseDTO;
 import com.danielks.Students_Notes.entities.mappers.CourseMapper;
+import com.danielks.Students_Notes.exceptions.course_exceptions.CourseNotFoundException;
 import com.danielks.Students_Notes.repositories.CourseRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public class CourseService {
 
     public CourseDTO getCourseById(UUID id) {
         Course course = courseRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + id));
+                .orElseThrow(() -> new CourseNotFoundException(id));
         return courseMapper.toDto(course);
     }
 
@@ -48,7 +48,7 @@ public class CourseService {
 
     public CourseDTO updateCourse(UUID id, CourseDTO courseDTO) {
         Course existingCourse = courseRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + id));
+                .orElseThrow(() -> new CourseNotFoundException(id));
 
         if(courseDTO.name() != null || !courseDTO.name().trim().isEmpty()){
             existingCourse.setName(courseDTO.name());
@@ -64,7 +64,7 @@ public class CourseService {
 
     public void deleteCourse(UUID id) {
         if (!courseRepository.existsById(id)) {
-            throw new EntityNotFoundException("Course not found with id: " + id);
+            throw new CourseNotFoundException(id);
         }
         courseRepository.deleteById(id);
     }
