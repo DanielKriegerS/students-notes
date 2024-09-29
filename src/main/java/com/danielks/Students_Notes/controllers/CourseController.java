@@ -1,13 +1,16 @@
 package com.danielks.Students_Notes.controllers;
 
 import com.danielks.Students_Notes.entities.dtos.CourseDTO;
+import com.danielks.Students_Notes.entities.dtos.CourseErrorDTO;
 import com.danielks.Students_Notes.exceptions.course_exceptions.CourseNotFoundException;
 import com.danielks.Students_Notes.services.CourseService;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,9 +31,12 @@ public class CourseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<CourseDTO>> getCourseById(@PathVariable UUID id) {
+    public ResponseEntity<EntityModel<?>> getCourseById(@PathVariable UUID id) {
         try {
             CourseDTO courseDTO = courseService.getCourseById(id);
+            if (courseDTO == null) {
+                throw new CourseNotFoundException(id);
+            }
 
             Link selfLink = linkTo(methodOn(CourseController.class).getCourseById(id)).withSelfRel();
             Link allCoursesLink = linkTo(methodOn(CourseController.class).getAllCourses()).withRel("all-courses");
@@ -39,9 +45,11 @@ public class CourseController {
 
             return ResponseEntity.ok(resource);
         } catch (CourseNotFoundException e) {
+            CourseErrorDTO errorResponse = new CourseErrorDTO("Course not found", HttpStatus.NOT_FOUND.value());
+            Link allCoursesLink = linkTo(methodOn(CourseController.class).getAllCourses()).withRel("all-courses");
+
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(EntityModel.of(null,
-                            linkTo(methodOn(CourseController.class).getAllCourses()).withRel("all-courses")));
+                    .body(EntityModel.of(errorResponse, allCoursesLink));
         }
     }
 
@@ -72,9 +80,12 @@ public class CourseController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EntityModel<CourseDTO>> updateCourse(@PathVariable UUID id, @RequestBody CourseDTO courseDTO) {
+    public ResponseEntity<EntityModel<?>> updateCourse(@PathVariable UUID id, @RequestBody CourseDTO courseDTO) {
         try {
             CourseDTO updatedCourse = courseService.updateCourse(id, courseDTO);
+            if (updatedCourse == null) {
+                throw new CourseNotFoundException(id);
+            }
 
             Link selfLink = linkTo(methodOn(CourseController.class).getCourseById(id)).withSelfRel();
             Link allCoursesLink = linkTo(methodOn(CourseController.class).getAllCourses()).withRel("all-courses");
@@ -83,21 +94,29 @@ public class CourseController {
 
             return ResponseEntity.ok(resource);
         } catch (CourseNotFoundException e) {
+            CourseErrorDTO errorResponse = new CourseErrorDTO("Course not found", HttpStatus.NOT_FOUND.value());
+            Link allCoursesLink = linkTo(methodOn(CourseController.class).getAllCourses()).withRel("all-courses");
+
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(EntityModel.of(null,
-                            linkTo(methodOn(CourseController.class).getAllCourses()).withRel("all-courses")));
+                    .body(EntityModel.of(errorResponse, allCoursesLink));
         }
     }
 
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCourse(@PathVariable UUID id) {
+    public ResponseEntity<?> deleteCourse(@PathVariable UUID id) {
         try {
             courseService.deleteCourse(id);
             Link allCoursesLink = linkTo(methodOn(CourseController.class).getAllCourses()).withRel("all-courses");
 
             return ResponseEntity.noContent().header("Link", allCoursesLink.toUri().toString()).build();
         } catch (CourseNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            CourseErrorDTO errorResponse = new CourseErrorDTO("Course not found", HttpStatus.NOT_FOUND.value());
+            Link allCoursesLink = linkTo(methodOn(CourseController.class).getAllCourses()).withRel("all-courses");
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(EntityModel.of(errorResponse, allCoursesLink));
         }
     }
+
 }
