@@ -4,6 +4,7 @@ import com.danielks.Students_Notes.entities.Course;
 import com.danielks.Students_Notes.entities.dtos.CourseDTO;
 import com.danielks.Students_Notes.entities.mappers.CourseMapper;
 import com.danielks.Students_Notes.exceptions.course_exceptions.CourseNotFoundException;
+import com.danielks.Students_Notes.exceptions.course_exceptions.InvalidCourseRequestException;
 import com.danielks.Students_Notes.repositories.CourseRepository;
 import org.springframework.stereotype.Service;
 
@@ -54,7 +55,9 @@ public class CourseService {
             existingCourse.setName(courseDTO.name());
         }
 
-        if(courseDTO.maxStudents() > 0) {
+        if(courseDTO.maxStudents() < 0) {
+            throw new InvalidCourseRequestException("max of students");
+        } else if (courseDTO.maxStudents() > 0){
             existingCourse.setMaxStudents(courseDTO.maxStudents());
         }
 
