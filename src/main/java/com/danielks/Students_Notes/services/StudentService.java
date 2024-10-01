@@ -35,7 +35,7 @@ public class StudentService {
     public StudentDTO getStudentById(UUID id) {
         return studentRepository.findById(id)
                 .map(studentMapper::toDto)
-                .orElse(null);
+                .orElseThrow(() -> new StudentNotFoundException(id));
     }
 
     public StudentDTO createStudent(StudentDTO studentDTO) {
@@ -49,25 +49,23 @@ public class StudentService {
 
     public StudentDTO updateStudent(UUID id, StudentDTO studentDTO) {
         Student existingStudent = studentRepository.findById(id)
-                .orElseThrow(()-> new StudentNotFoundException(id));
+                .orElseThrow(() -> new StudentNotFoundException(id));
 
-        if (studentDTO.name() != null || studentDTO.name().trim().isEmpty()){
+        if (studentDTO.name() != null && !studentDTO.name().trim().isEmpty()) {
             existingStudent.setName(studentDTO.name());
         }
 
         if (studentDTO.age() > 15) {
             existingStudent.setAge(studentDTO.age());
+        } else if (studentDTO.age() > 0 && studentDTO.age() <= 15) {
+            throw new InvalidStudentRequestException("Age must be greater than 15.");
         }
 
-        if (studentDTO.age() > 0 && studentDTO.age() < 15) {
-            throw new InvalidStudentRequestException("The age is invalid!");
-        }
-
-        Student updateStudent = studentRepository.save(existingStudent);
-        return studentMapper.toDto(updateStudent);
+        Student updatedStudent = studentRepository.save(existingStudent);
+        return studentMapper.toDto(updatedStudent);
     }
 
-    public void deleteStudent (UUID id) {
+    public void deleteStudent(UUID id) {
         if (!studentRepository.existsById(id)) {
             throw new StudentNotFoundException(id);
         }
