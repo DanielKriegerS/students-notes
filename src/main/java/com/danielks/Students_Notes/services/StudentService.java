@@ -55,9 +55,9 @@ public class StudentService {
             existingStudent.setName(studentDTO.name());
         }
 
-        if (studentDTO.age() > 15) {
+        if (studentDTO.age() >= 15) {
             existingStudent.setAge(studentDTO.age());
-        } else if (studentDTO.age() > 0 && studentDTO.age() <= 15) {
+        } else if (studentDTO.age() != 0){
             throw new InvalidStudentRequestException("Age must be greater than 15.");
         }
 
