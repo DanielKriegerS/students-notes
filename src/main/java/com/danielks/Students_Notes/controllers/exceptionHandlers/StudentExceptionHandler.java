@@ -2,6 +2,7 @@ package com.danielks.Students_Notes.controllers.exceptionHandlers;
 
 import com.danielks.Students_Notes.controllers.StudentController;
 import com.danielks.Students_Notes.entities.dtos.StudentErrorDTO;
+import com.danielks.Students_Notes.exceptions.student_exceptions.InvalidStudentRequestException;
 import com.danielks.Students_Notes.exceptions.student_exceptions.StudentNotFoundException;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -17,10 +18,21 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class StudentExceptionHandler {
     @ExceptionHandler(StudentNotFoundException.class)
     public ResponseEntity<EntityModel<StudentErrorDTO>> handleStudentNotFound(StudentNotFoundException e) {
-        StudentErrorDTO errorResponse = new StudentErrorDTO("Student not found", HttpStatus.NOT_FOUND.value());
+        StudentErrorDTO errorResponse = new StudentErrorDTO("Student not found: " + e.getMessage(), HttpStatus.NOT_FOUND.value());
         Link allStudentsLink = linkTo(methodOn(StudentController.class).getAllStudents()).withRel("all-students");
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(EntityModel.of(errorResponse, allStudentsLink));
+    }
+
+    @ExceptionHandler(InvalidStudentRequestException.class)
+    public ResponseEntity<EntityModel<StudentErrorDTO>> handleInvalidRequest(InvalidStudentRequestException e) {
+        StudentErrorDTO errorResponse = new StudentErrorDTO(
+                "Invalid request: " + e.getMessage(), HttpStatus.BAD_REQUEST.value()
+        );
+        Link allStudentsLink = linkTo(methodOn(StudentController.class).getAllStudents()).withRel("all-students");
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(EntityModel.of(errorResponse, allStudentsLink));
     }
 }
