@@ -1,8 +1,6 @@
 package com.danielks.Students_Notes.controllers;
 
 import com.danielks.Students_Notes.entities.dtos.CourseDTO;
-import com.danielks.Students_Notes.entities.dtos.CourseErrorDTO;
-import com.danielks.Students_Notes.exceptions.course_exceptions.CourseNotFoundException;
 import com.danielks.Students_Notes.services.CourseService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
