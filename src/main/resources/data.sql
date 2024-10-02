@@ -1,6 +1,6 @@
 -- courses inserteds
 INSERT INTO course (id, name, max_students) VALUES
-('d290f1ee-6c54-4b01-90e6-d701748f0851', 'Mathematics', 30),
+('d290f1ee-6c54-4b01-90e6-d701748f0851', 'Mathematics', 1),
 ('5d8a3e47-37b9-4b89-b832-0345d10c2e2c', 'Physics', 25);
 
 -- students inserteds
