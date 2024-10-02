@@ -33,4 +33,16 @@ public class IntegrationService {
 
         return studentMapper.toDto(student);
     }
+
+    public StudentDTO unenrollStudentFromCourse(UUID studentId, UUID courseId) {
+        Student student = validator.validateStudent(studentId);
+        Course course = validator.validateCourse(courseId);
+
+        validator.validateUnenroll(student, course);
+
+        student.setCourse(null);
+        studentRepository.save(student);
+
+        return studentMapper.toDto(student);
+    }
 }
