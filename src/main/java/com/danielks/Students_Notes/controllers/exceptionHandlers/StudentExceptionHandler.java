@@ -4,6 +4,7 @@ import com.danielks.Students_Notes.controllers.IntegrationController;
 import com.danielks.Students_Notes.controllers.StudentController;
 import com.danielks.Students_Notes.entities.dtos.StudentErrorDTO;
 import com.danielks.Students_Notes.exceptions.course_exceptions.StudentAlreadyEnrolledException;
+import com.danielks.Students_Notes.exceptions.course_exceptions.StudentNotEnrolledException;
 import com.danielks.Students_Notes.exceptions.student_exceptions.InvalidStudentRequestException;
 import com.danielks.Students_Notes.exceptions.student_exceptions.StudentNotFoundException;
 import org.springframework.hateoas.EntityModel;
@@ -45,4 +46,14 @@ public class StudentExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(EntityModel.of(errorResponse, allStudentsLink));
     }
+
+    @ExceptionHandler(StudentNotEnrolledException.class)
+    public ResponseEntity<EntityModel<StudentErrorDTO>> handleStudentNotEnrolled(StudentNotEnrolledException e) {
+        StudentErrorDTO errorResponse = new StudentErrorDTO(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+        Link allStudentsLink = linkTo(methodOn(StudentController.class).getAllStudents()).withRel("all-students");
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(EntityModel.of(errorResponse, allStudentsLink));
+    }
+
 }
