@@ -53,4 +53,22 @@ public class IntegrationController {
 
         return ResponseEntity.ok(resource);
     }
+
+    @PostMapping("/transfer")
+    public ResponseEntity<EntityModel<?>> transferStudentToCourse(
+            @RequestParam UUID studentId,
+            @RequestParam UUID oldCourseId,
+            @RequestParam UUID newCourseId) {
+
+        StudentDTO transferredStudent = integrationService.transferStudentToCourse(studentId, oldCourseId, newCourseId);
+
+        Link selfLink = linkTo(methodOn(IntegrationController.class)
+                .transferStudentToCourse(studentId, oldCourseId, newCourseId)).withSelfRel();
+        Link studentLink = linkTo(methodOn(StudentController.class).getStudentById(transferredStudent.id())).withRel("student-link");
+        Link newCourseLink = linkTo(methodOn(CourseController.class).getCourseById(newCourseId)).withRel("new-course-link");
+
+        EntityModel<StudentDTO> resource = EntityModel.of(transferredStudent, selfLink, studentLink, newCourseLink);
+
+        return ResponseEntity.ok(resource);
+    }
 }
