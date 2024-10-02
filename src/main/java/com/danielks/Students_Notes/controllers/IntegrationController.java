@@ -5,10 +5,7 @@ import com.danielks.Students_Notes.services.IntegrationService;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -37,6 +34,22 @@ public class IntegrationController {
         Link courseLink = linkTo(methodOn(CourseController.class).getCourseById(courseId)).withRel("course-link");
 
         EntityModel<StudentDTO> resource = EntityModel.of(enrolledStudent, selfLink, studentLink, courseLink);
+
+        return ResponseEntity.ok(resource);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<EntityModel<?>> unenrollStudentFromCourse(
+            @RequestParam UUID studentId,
+            @RequestParam UUID courseId) {
+
+        StudentDTO unenrolledStudent = integrationService.unenrollStudentFromCourse(studentId, courseId);
+
+        Link selfLink = linkTo(methodOn(IntegrationController.class).unenrollStudentFromCourse(studentId, courseId)).withSelfRel();
+        Link studentLink = linkTo(methodOn(StudentController.class).getStudentById(unenrolledStudent.id())).withRel("student-link");
+        Link courseLink = linkTo(methodOn(CourseController.class).getCourseById(courseId)).withRel("course-link");
+
+        EntityModel<StudentDTO> resource = EntityModel.of(unenrolledStudent, selfLink, studentLink, courseLink);
 
         return ResponseEntity.ok(resource);
     }
