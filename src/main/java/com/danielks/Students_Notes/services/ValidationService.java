@@ -2,10 +2,7 @@ package com.danielks.Students_Notes.services;
 
 import com.danielks.Students_Notes.entities.Course;
 import com.danielks.Students_Notes.entities.Student;
-import com.danielks.Students_Notes.exceptions.course_exceptions.CourseFullException;
-import com.danielks.Students_Notes.exceptions.course_exceptions.CourseNotFoundException;
-import com.danielks.Students_Notes.exceptions.course_exceptions.InvalidCourseRequestException;
-import com.danielks.Students_Notes.exceptions.course_exceptions.StudentAlreadyEnrolledException;
+import com.danielks.Students_Notes.exceptions.course_exceptions.*;
 import com.danielks.Students_Notes.exceptions.student_exceptions.InvalidStudentRequestException;
 import com.danielks.Students_Notes.exceptions.student_exceptions.StudentNotFoundException;
 import com.danielks.Students_Notes.repositories.CourseRepository;
@@ -62,6 +59,12 @@ public class ValidationService {
 
         if (student.getCourse() != null && !student.getCourse().getId().equals(course.getId())) {
             throw new StudentAlreadyEnrolledException(student.getId(), student.getCourse().getId());
+        }
+    }
+
+    public void validateUnenroll(Student student, Course course) {
+        if (student.getCourse() == null || !student.getCourse().equals(course)) {
+            throw new StudentNotEnrolledException(student.getId(), course.getId());
         }
     }
 }
