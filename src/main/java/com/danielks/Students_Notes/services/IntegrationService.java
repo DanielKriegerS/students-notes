@@ -45,4 +45,19 @@ public class IntegrationService {
 
         return studentMapper.toDto(student);
     }
+
+    public StudentDTO transferStudentToCourse(UUID studentId, UUID oldCourseId, UUID newCourseId) {
+        Student student = validator.validateStudent(studentId);
+        Course oldCourse = validator.validateCourse(oldCourseId);
+        Course newCourse = validator.validateCourse(newCourseId);
+
+        validator.validateUnenroll(student, oldCourse);
+        student.setCourse(null);
+
+        validator.validateEnroll(student, newCourse);
+        student.setCourse(newCourse);
+        studentRepository.save(student);
+
+        return studentMapper.toDto(student);
+    }
 }
